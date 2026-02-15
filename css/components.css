@@ -1,0 +1,163 @@
+/* Логотип */
+.logo {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+/* Заголовки */
+h1 {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+.subtitle {
+    color: var(--text-secondary);
+    font-size: 16px;
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+/* Группа ввода */
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+}
+
+/* Стилизация полей ввода */
+input, textarea {
+    background-color: var(--card-bg);
+    border: 1px solid transparent;
+    border-radius: var(--border-radius);
+    color: var(--text-main);
+    padding: 18px 24px;
+    font-size: 16px;
+    font-family: inherit;
+    transition: var(--transition);
+    outline: none;
+    width: 100%;
+}
+
+input:focus, textarea:focus {
+    border-color: #333; /* Тонкий акцент при фокусе */
+    background-color: var(--hover-bg);
+}
+
+/* Главная кнопка */
+.btn-primary {
+    background-color: var(--accent);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius);
+    padding: 20px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 24px;
+    width: 100%;
+    transition: var(--transition);
+}
+
+.btn-primary:hover {
+    filter: brightness(1.2);
+    transform: translateY(-1px);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+/* Сообщения чата (задел на будущее) */
+.message {
+    max-width: 85%;
+    padding: 16px 20px;
+    border-radius: 20px;
+    margin-bottom: 12px;
+    font-size: 15px;
+}
+
+.message.bot {
+    background-color: var(--card-bg);
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+}
+
+.message.user {
+    background-color: var(--accent);
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+}
+
+/* Контейнер для карточки тренировки */
+.workout-card {
+    background: #16181f;
+    border: 1px solid #1d2028;
+    border-radius: 20px;
+    padding: 20px;
+    margin: 15px 0;
+    width: 100%;
+}
+
+.workout-header {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #ffffff;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #1d2028;
+    padding-bottom: 10px;
+}
+
+.workout-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 12px 0;
+    border-bottom: 1px solid #1d2028;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.workout-item:last-child { border-bottom: none; }
+
+/* Кастомный чекбокс */
+.workout-item input[type="checkbox"] {
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    border: 2px solid #e10600;
+    border-radius: 6px;
+    background: transparent;
+    cursor: pointer;
+    position: relative;
+}
+
+.workout-item input[type="checkbox"]:checked {
+    background: #e10600;
+}
+
+.workout-item input[type="checkbox"]:checked::after {
+    content: '✓';
+    position: absolute;
+    color: white;
+    font-size: 16px;
+    left: 4px;
+    top: -1px;
+}
+
+.workout-item span {
+    font-size: 1rem;
+    color: #9aa0a6;
+}
+
+.workout-item input[type="checkbox"]:checked + span {
+    text-decoration: line-through;
+    color: #4a4d55;
+}

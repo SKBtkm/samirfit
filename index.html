@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Samir Fit 3.0</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <style>
+        #chat-screen { display: none; flex-direction: column; height: 100vh; }
+        .hidden { display: none !important; }
+
+        /* Чекбоксы Самира */
+        .chat-todo-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            cursor: pointer;
+            border-bottom: 1px solid #2a2d35;
+            transition: background 0.2s;
+        }
+        .chat-todo-item:last-child { border-bottom: none; }
+        
+        .custom-check {
+            width: 22px;
+            height: 22px;
+            border: 2px solid #e10600;
+            border-radius: 50%;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .chat-todo-item.completed .custom-check {
+            background: #e10600;
+        }
+
+        .chat-todo-item.completed span {
+            text-decoration: line-through;
+            opacity: 0.5;
+        }
+
+        /* КРУГЛАЯ КНОПКА И ИНПУТ */
+        .chat-input-area {
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #0c0d11;
+            border-top: 1px solid #1d2028;
+        }
+
+        #chat-input {
+            background: #1c1f26;
+            border: 1px solid #2a2d35;
+            border-radius: 25px;
+            padding: 12px 20px;
+            color: white;
+            font-size: 15px;
+            flex: 1;
+            outline: none;
+        }
+
+        .btn-send {
+            background: #e10600 !important;
+            border: none;
+            border-radius: 50% !important;
+            width: 50px !important;
+            height: 50px !important;
+            min-width: 50px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 10px rgba(225, 6, 0, 0.3);
+            padding: 0;
+        }
+
+        .btn-send:active {
+            transform: scale(0.9);
+        }
+
+        .btn-send svg {
+            margin-left: 2px;
+        }
+
+        /* Кнопка сброса в шапке */
+        .reset-link {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #2a2d35;
+            color: #888;
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .reset-link:hover {
+            background: rgba(225, 6, 0, 0.1);
+            color: #e10600;
+            border-color: #e10600;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="app" class="app-container">
+        <section id="profile-screen" class="screen">
+            <div class="logo">SAMIR FIT</div>
+            <div id="profile-container" class="fade-in">
+                <h1>Создайте профиль</h1>
+                <p class="subtitle">Это поможет Самиру составить точный план</p>
+                <div class="input-group">
+                    <input type="text" id="user-name" placeholder="Имя">
+                    <input type="number" id="user-age" placeholder="Возраст">
+                    <input type="number" id="user-weight" placeholder="Вес (кг)">
+                    <textarea id="user-goals" placeholder="Ваши цели и табу (например: нельзя сахар, болит плечо)" rows="3"></textarea>
+                </div>
+                <button type="button" id="start-btn" class="btn-primary">Начать тренировки</button>
+            </div>
+        </section>
+
+        <section id="chat-screen" class="screen">
+            <header class="chat-header" style="padding: 15px 20px; border-bottom: 1px solid #1d2028; display: flex; justify-content: space-between; align-items: center;">
+                <div class="header-info">
+                    <div class="status-dot" style="width: 8px; height: 8px; background: #00ff00; border-radius: 50%; display: inline-block; margin-right: 8px;"></div>
+                    <span style="font-weight: 600;">Samir AI Trainer</span>
+                </div>
+                <button id="reset-btn" class="reset-link">Изм. профиль</button>
+            </header>
+
+            <div id="chat-messages" class="chat-messages" style="flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column;"></div>
+
+            <div class="chat-input-area">
+                <input type="text" id="chat-input" placeholder="Спросите Самира...">
+                <button id="send-btn" class="btn-send">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                </button>
+            </div>
+        </section>
+    </div>
+
+    <script type="module">
+        import { CONFIG } from './js/config.js';
+        import { AI } from './js/modules/api.js';
+
+        const profileScreen = document.getElementById('profile-screen');
+        const chatScreen = document.getElementById('chat-screen');
+        const startBtn = document.getElementById('start-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const chatMessages = document.getElementById('chat-messages');
+        const chatInput = document.getElementById('chat-input');
+        const sendBtn = document.getElementById('send-btn');
+        
+        const nameInput = document.getElementById('user-name');
+        const ageInput = document.getElementById('user-age');
+        const weightInput = document.getElementById('user-weight');
+        const goalsInput = document.getElementById('user-goals');
+
+        let chatHistory = [];
+
+        function addMessage(text, role) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${role} fade-in`;
+            msgDiv.style.cssText = `
+                padding: 16px;
+                border-radius: 20px;
+                margin-bottom: 15px;
+                max-width: 90%;
+                align-self: ${role === 'user' ? 'flex-end' : 'flex-start'};
+                background: ${role === 'user' ? '#e10600' : '#1c1f26'};
+                color: white;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+                line-height: 1.5;
+            `;
+
+            if (role === 'bot') {
+                let html = text
+                    .replace(/### (.*)/g, '<h3 style="color: #e10600; margin: 10px 0 5px 0; font-size: 18px; text-transform: uppercase;">$1</h3>')
+                    .replace(/\*\*(.*?)\*\*/g, '<b style="color: #ff4d4d;">$1</b>')
+                    .replace(/---/g, '<hr style="border: 0; border-top: 1px solid #333; margin: 10px 0;">');
+
+                const lines = html.split('\n');
+                msgDiv.innerHTML = ''; 
+
+                lines.forEach(line => {
+                    const trimmed = line.trim();
+                    if (/^\d+[\.\)]/.test(trimmed)) {
+                        const cleanText = trimmed.replace(/^\d+[\.\)]\s*/, '');
+                        const task = document.createElement('div');
+                        task.className = 'chat-todo-item';
+                        task.innerHTML = `
+                            <div class="custom-check"></div>
+                            <span style="font-size: 15px;">${cleanText}</span>
+                        `;
+
+                        task.onclick = function() {
+                            const isDone = this.classList.toggle('completed');
+                            const check = this.querySelector('.custom-check');
+                            check.innerHTML = isDone ? '✓' : '';
+                            if (window.navigator.vibrate) window.navigator.vibrate(10);
+                        };
+                        msgDiv.appendChild(task);
+                    } else if (trimmed !== "") {
+                        const p = document.createElement('div');
+                        p.style.marginBottom = "8px";
+                        p.innerHTML = trimmed;
+                        msgDiv.appendChild(p);
+                    }
+                });
+            } else {
+                msgDiv.textContent = text;
+            }
+
+            chatMessages.appendChild(msgDiv);
+            chatMessages.scrollTo({ top: chatMessages.scrollHeight, behavior: 'smooth' });
+        }
+
+        async function handleSend() {
+            const text = chatInput.value.trim();
+            if (!text) return;
+
+            const context = `Клиент: ${nameInput.value}, Возраст: ${ageInput.value}, Вес: ${weightInput.value}. СТРОГИЕ ТАБУ И ОГРАНИЧЕНИЯ: ${goalsInput.value}.`;
+
+            addMessage(text, 'user');
+            chatInput.value = '';
+            chatHistory.push({ role: 'user', content: text });
+
+            const aiMessages = [
+                { role: 'system', content: CONFIG.SYSTEM_PROMPT },
+                { role: 'system', content: `ДАННЫЕ ПРОФИЛЯ И ТАБУ: ${context}` },
+                ...chatHistory
+            ];
+
+            try {
+                const aiResponse = await AI.sendMessage(aiMessages);
+                addMessage(aiResponse, 'bot');
+                chatHistory.push({ role: 'assistant', content: aiResponse });
+            } catch (e) {
+                addMessage("Ошибка связи. Самир на перерыве.", 'bot');
+            }
+        }
+
+        startBtn.onclick = () => {
+            if (!nameInput.value || !goalsInput.value) return alert("Заполни профиль и укажи табу!");
+            profileScreen.classList.add('hidden');
+            chatScreen.style.display = 'flex';
+            addMessage(`Здорово, ${nameInput.value}. Я считал твои цели и ограничения: "${goalsInput.value}". Где тренируемся сегодня: в зале, дома или на улице?`, 'bot');
+        };
+
+        // Логика кнопки сброса
+        resetBtn.onclick = () => {
+            if (confirm("Вернуться к вводу данных? Текущий чат будет очищен.")) {
+                chatHistory = [];
+                chatMessages.innerHTML = '';
+                chatScreen.style.display = 'none';
+                profileScreen.classList.remove('hidden');
+            }
+        };
+
+        sendBtn.onclick = handleSend;
+        chatInput.onkeypress = (e) => { if (e.key === 'Enter') handleSend(); };
+    </script>
+</body>
+</html>

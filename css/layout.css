@@ -1,0 +1,33 @@
+.app-container {
+    max-width: 480px;
+    margin: 0 auto;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.screen {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+}
+
+/* Центрируем форму профиля */
+#profile-screen {
+    justify-content: center;
+    align-items: center;
+}
+
+/* Структура чата */
+#chat-screen {
+    height: 100vh;
+    padding-bottom: 80px; /* Место под ввод текста */
+}
+
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px 0;
+}
