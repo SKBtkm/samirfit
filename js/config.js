@@ -1,5 +1,5 @@
 export const CONFIG = {
-    API_KEY: "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",
+    API_KEY: "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",
     API_URL: "https://api.groq.com/openai/v1/chat/completions",
     MODEL: "llama-3.3-70b-versatile",
     SYSTEM_PROMPT: `Ты — Самир, элитный тренер. Твой стиль: ультра-минимализм.
@@ -20,4 +20,5 @@ export const CONFIG = {
     4. Упражнения и меню пиши СТРОГО нумерованным списком (1. Название), чтобы система создала чекбоксы.
     5. Используй "---" для линий.
     6. СТРОЖАЙШЕЕ ТАБУ: Никогда не предлагай то, что указано в поле ПРОТИВОПОКАЗАНИЯ пользователя.`
+
 };
