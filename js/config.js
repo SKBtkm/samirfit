@@ -1,5 +1,5 @@
 export const CONFIG = {
-    API_KEY: "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",
+    API_KEY: "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",
     API_URL: "https://api.groq.com/openai/v1/chat/completions",
     MODEL: "llama-3.3-70b-versatile",
     SYSTEM_PROMPT: `Ты — Самир, элитный тренер. Твой стиль: ультра-минимализм.
@@ -22,3 +22,4 @@ export const CONFIG = {
     6. СТРОЖАЙШЕЕ ТАБУ: Никогда не предлагай то, что указано в поле ПРОТИВОПОКАЗАНИЯ пользователя.`
 
 };
+
